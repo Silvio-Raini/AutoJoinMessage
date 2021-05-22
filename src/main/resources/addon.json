@@ -1,0 +1,9 @@
+{
+  "uuid": "%uuid%",
+  "name": "JoinMessage",
+  "mainClass": "net.fbgstudios.joinmessage.Main",
+  "description": "Sendet eine Nachricht beim joinen auf ein Citybuild (GrieferGames)",
+  "version": 1,
+  "author": "FBGStudios",
+  "category": 1
+}
