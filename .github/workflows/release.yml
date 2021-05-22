@@ -1,0 +1,47 @@
+name Release
+
+on
+  push
+    tags 'v'
+
+jobs
+  build
+    runs-on ubuntu-latest
+    steps
+      - name Checkout code
+        uses actionscheckout@v2
+      - name Set up JDK 1.8
+        uses actionssetup-java@v1
+        with
+          java-version 1.8
+      - name Cache Gradle packages
+        uses actionscache@v2
+        with
+          path ~.gradlecaches
+          key ${{ runner.os }}-gradle-${{ hashFiles('.gradle') }}
+          restore-keys ${{ runner.os }}-gradle
+      - name Grant execute permission for gradlew
+        run chmod +x gradlew
+      - name Build with Gradle
+        run .gradlew build
+
+      - name Create Release
+        id create_release
+        uses actionscreate-release@v1
+        env
+          GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        with
+          tag_name ${{ github.ref }}
+          release_name Release ${{ github.ref }}
+          draft false
+          prerelease false
+      - name Upload Release Asset
+        id upload-release-asset
+        uses actionsupload-release-asset@v1
+        env
+          GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        with
+          upload_url ${{ steps.create_release.outputs.upload_url }}
+          asset_path .buildlibsScammerList.jar
+          asset_name ScammerList.jar
+          asset_content_type applicationjava-archive
